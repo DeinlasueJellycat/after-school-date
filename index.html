@@ -59,8 +59,9 @@ button{border:0;border-radius:14px;padding:13px 18px;font:inherit;font-weight:80
 <section id="home" class="panel title-screen">
  <div class="title-inner"><div class="eyebrow">A LITTLE ROMANCE VISUAL NOVEL</div><h1>두근두근<br>방과 후 데이트</h1><p class="subtitle">벚꽃이 흩날리는 하굣길, 두 사람과 함께하는 특별한 하루.<br>당신의 선택으로 오늘의 결말이 달라집니다.</p>
  <div class="cover-girls"><div class="cover-girl"><img src="핑크 머리 소녀 표정 스티커 시트.png" alt="하나조노 하카리 표정 모음"><div class="caption">하나조노 하카리</div></div><div class="cover-girl k"><img src="금발 트윈테일 소녀의 네 가지 표정.png" alt="인다 카라네 표정 모음"><div class="caption">인다 카라네</div></div></div>
- <div class="buttons"><button class="pink" onclick="start('hakari')">하카리와 데이트 ♥</button><button class="gold" onclick="start('karane')">카라네와 데이트 ♡</button></div><p class="muted" style="margin-top:18px">모바일 플레이 지원 · 선택지에 따라 호감도와 엔딩이 달라져요</p></div>
+ <div class="buttons"><button class="pink" onclick="showRoutes()">스토리</button></div><p class="muted" style="margin-top:18px">스토리를 시작하고 함께할 캐릭터를 선택하세요.</p></div>
 </section>
+<section id="routeSelect" class="panel title-screen hidden"><div class="title-inner"><div class="eyebrow">CHOOSE YOUR STORY</div><h1 style="font-size:clamp(30px,5vw,48px)">누구와 함께할까요?</h1><p class="subtitle">오늘 방과 후, 함께 시간을 보내고 싶은 상대를 선택해 주세요.</p><div class="buttons"><button class="pink" onclick="start('hakari')">하나조노 하카리 ♥</button><button class="gold" onclick="start('karane')">인다 카라네 ♡</button><button onclick="showHome()">타이틀로 돌아가기</button></div></div></section>
 <section id="game" class="panel scene hidden">
 <div class="portrait" id="portrait"></div><div class="story"><div><div class="storytop"><span id="charname" class="name">하카리</span><span class="muted">호감도 <b id="score">0</b>/100</span></div><div class="meter"><div class="fill" id="fill"></div></div><div class="dialog" id="dialog"></div></div><div id="choices"></div></div>
 </section>
@@ -78,7 +79,9 @@ karane:[
 ["인다 카라네","저기… 오늘은 조금 더 같이 있고 싶을지도. 너는 어때?","나도 같이 있고 싶어.|20","조금만 더 걷자.|15","부끄러워하는 거 귀여워.|8"]]
 };
 let route="",step=0,score=0;
-function start(r){route=r;step=0;score=0;document.getElementById('home').classList.add('hidden');document.getElementById('ending').classList.add('hidden');document.getElementById('game').classList.remove('hidden');render()}
+function showRoutes(){document.getElementById('home').classList.add('hidden');document.getElementById('routeSelect').classList.remove('hidden')}
+function showHome(){document.getElementById('routeSelect').classList.add('hidden');document.getElementById('home').classList.remove('hidden')}
+function start(r){route=r;step=0;score=0;document.getElementById('home').classList.add('hidden');document.getElementById('routeSelect').classList.add('hidden');document.getElementById('ending').classList.add('hidden');document.getElementById('game').classList.remove('hidden');render()}
 function render(){let s=scenes[route][step],p=document.getElementById('portrait');p.innerHTML='<img src="'+(route==='hakari'?'핑크 머리 소녀 표정 스티커 시트.png':'금발 트윈테일 소녀의 네 가지 표정.png')+'" alt="'+s[0]+' 표정">';let img=p.querySelector('img');img.style.left=(step%2===0?'0':'-100%');img.style.top=(step===0?'0':'-100%');document.getElementById('charname').textContent=s[0];document.getElementById('charname').className='name'+(route==='karane'?' k':'');document.getElementById('score').textContent=score;document.getElementById('fill').style.width=Math.max(0,Math.min(100,score))+'%';document.getElementById('dialog').textContent=s[1];let c=document.getElementById('choices');c.innerHTML='';s.slice(2).forEach(v=>{let [label,n]=v.split('|');let b=document.createElement('button');b.className='choice';b.textContent='♥ '+label;b.onclick=()=>choose(+n);c.appendChild(b)})}
 function choose(n){score=Math.max(0,Math.min(100,score+n));step++;if(step<scenes[route].length){render();return}document.getElementById('game').classList.add('hidden');document.getElementById('ending').classList.remove('hidden');let good=score>=35;document.getElementById('endtitle').textContent=good?'해피 엔딩 ♥':'조금 아쉬운 방과 후';document.getElementById('endtext').textContent=route==='hakari'?(good?'하카리는 환하게 웃으며 당신의 손을 잡았다. “오늘은 정말 행복했어요!”':'하카리는 아쉬운 듯 미소 지으며 다음을 기약했다.'):(good?'카라네는 얼굴을 붉히며 작게 속삭였다. “내일도… 같이 가자.”':'카라네는 고개를 돌렸다. “다음엔 좀 더 잘해 보라고!”');document.getElementById('endscore').textContent='최종 호감도 '+score+' / 100';}
 </script></body></html>
